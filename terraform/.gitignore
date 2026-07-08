@@ -1,0 +1,11 @@
+# Estado de Terraform: puede contener datos sensibles. No se versiona.
+*.tfstate
+*.tfstate.*
+
+# Directorio de trabajo y binarios del provider.
+.terraform/
+
+# Archivos de variables locales (por si se usan).
+*.tfvars
+
+crash.log

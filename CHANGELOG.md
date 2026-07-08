@@ -7,6 +7,17 @@ infraestructura en Google Cloud (Cloud Run, Cloud Build, Terraform).
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/);
 versionado semántico.
 
+## [0.5.0] - 2026-07-07
+
+### Añadido
+- Carpeta `terraform/` con la infraestructura como código (Parte 3): `main.tf`
+  (provider `google`, repositorio de Artifact Registry `monolito-tf` y servicio de
+  Cloud Run `incidentes-tf` con acceso público), `variables.tf`, `outputs.tf` y
+  `.gitignore` (excluye el estado local de Terraform).
+- El servicio `incidentes-tf` reutiliza una imagen ya publicada en el repo
+  `monolito` (Partes 1/2): Terraform provisiona la infraestructura y el pipeline
+  produce las imágenes.
+
 ## [0.4.0] - 2026-07-07
 
 ### Infraestructura / pruebas

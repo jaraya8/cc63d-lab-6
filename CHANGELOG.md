@@ -7,6 +7,15 @@ infraestructura en Google Cloud (Cloud Run, Cloud Build, Terraform).
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/);
 versionado semántico.
 
+## [0.4.0] - 2026-07-07
+
+### Infraestructura / pruebas
+- Otorgado el rol `logging.logWriter` a la service account del build
+  (`313803569462-compute@developer.gserviceaccount.com`). Como el `cloudbuild.yaml`
+  usa `options: logging: CLOUD_LOGGING_ONLY`, este rol es necesario para que los
+  logs de la pipeline se escriban en Cloud Logging y queden visibles en la consola.
+- Este push valida la pipeline completa con los logs ya disponibles.
+
 ## [0.3.0] - 2026-07-07
 
 ### Añadido

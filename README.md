@@ -74,3 +74,9 @@ bash seed.sh https://TU-URL       # o apunta a tu servicio en Cloud Run
 pip install -r requirements-dev.txt
 pytest
 ```
+
+## Despliegue continuo (Lab 7)
+
+Este fork agrega `cloudbuild.yaml`: una pipeline de Cloud Build que, ante cada
+`push` a `main`, construye la imagen, corre las pruebas, la publica en Artifact
+Registry y despliega la nueva revisión en Cloud Run.

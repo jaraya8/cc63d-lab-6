@@ -1,0 +1,37 @@
+# Pipeline de CI/CD del monolito (Lab 7 · Parte 2).
+# Cada push a main dispara: build -> test -> push -> deploy.
+# La imagen se etiqueta con $COMMIT_SHA para que cada despliegue sea
+# rastreable hasta el commit que lo originó.
+
+substitutions:
+  _REGION: southamerica-west1
+
+steps:
+  # 1. Construir la imagen del contenedor.
+  - name: gcr.io/cloud-builders/docker
+    args: ['build', '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/monolito/incidentes:$COMMIT_SHA', '.']
+
+  # 2. Ejecutar las pruebas (pytest) como control de calidad: si fallan, el build
+  #    se detiene y NO se publica ni se despliega. Se corren sobre el código
+  #    porque la imagen de producción no incluye pytest ni la carpeta tests/.
+  - name: python:3.12-slim
+    entrypoint: bash
+    args: ['-c', 'pip install -r requirements-dev.txt && pytest']
+
+  # 3. Publicar la imagen en Artifact Registry.
+  - name: gcr.io/cloud-builders/docker
+    args: ['push', '${_REGION}-docker.pkg.dev/$PROJECT_ID/monolito/incidentes:$COMMIT_SHA']
+
+  # 4. Desplegar la nueva revisión en Cloud Run (mismo servicio de la Parte 1).
+  #    El acceso público se mantiene: la política IAM vive en el servicio y las
+  #    revisiones nuevas la heredan, así que no hace falta reabrirlo aquí.
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: gcloud
+    args: ['run', 'deploy', 'incidentes',
+           '--image=${_REGION}-docker.pkg.dev/$PROJECT_ID/monolito/incidentes:$COMMIT_SHA',
+           '--region=${_REGION}']
+
+# Enviar los logs a Cloud Logging. En proyectos nuevos de GCP el build corre con
+# una service account que exige fijar este campo de forma explícita.
+options:
+  logging: CLOUD_LOGGING_ONLY
